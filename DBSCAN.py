@@ -1,96 +1,124 @@
 import pandas as pd
 import numpy as np
 import random
+
+
 class DBScan:
     def __init__(self):
-        self.clusters= []
+        # inicializacion de las variables locales
+        self.clusters = []  #clusers(instanciaId, clusterId)
         self.epsilon = 0
         self.nmpr = 0
         self.df = []
 
     def fit(self, epsilon, nmpr, df):
-        self.epsilon=epsilon
-        self.nmpr=nmpr
+        """
+        input:  epsilon --> radio
+                nmpr --> minimo numero de instancias por cluster
+                df --> dataframe que almacena instancias de train
+        return: la lista de clusters con el id cada instancia que contiene por cada cluster   
+        """
+
+        self.epsilon = epsilon
+        self.nmpr = nmpr
         self.df = df
-        C = 1
+        clusterId = 1
         current_stack = set()
         unvisited = list(df.index)
+        primer_pto = True
 
-        while (len(unvisited)!=0):
-            primer_pto = True
+        while len(unvisited) != 0:  # recorrer todos los puntos no visitados
+
+            # añadir un punto aleatorio no visitado para explorarlo
             current_stack.add(random.choice(unvisited))
 
-            while len(current_stack) != 0:
-                curr_idx = current_stack.pop()
-                vecinos_idx, tipo = obtenerVecinos(epsilon,nmpr,df, curr_idx)
+            # ciclo hasta completar el cluster
+            while len(current_stack) > 0:
 
-                if(tipo==1 & primer_pto):    #si es un border point
+                curr_idx = current_stack.pop()  # instancia a examinar y expandir
+
+                # obtener los vecinos del punto actual y el tipo de punto actual (core, edge, outlier)
+                vecinos_idx, tipo = obtenerVecinos(epsilon, nmpr, df, curr_idx)
+
+                if tipo == 1 & primer_pto:  # si el primer punto es un border point
+                    # marcar el punto actual y a sus vecinos como outliers
                     self.clusters.append((curr_idx, 0))
                     self.clusters.extend(list(zip(vecinos_idx, [0 for _ in range(len(vecinos_idx))])))
 
-                    # label as visited
+                    # marcar el punto actual y a sus vecinos como visitados
                     unvisited.remove(curr_idx)
                     unvisited = [e for e in unvisited if e not in vecinos_idx]
-
-                    continue
-                unvisited.remove(curr_idx)  # remove point from unvisited list
-
-                neigh_indexes = set(neigh_indexes) & set(unvisited)  # look at only unvisited points
-
-                if(tipo==0):    #Si es core
-                    first_point = False
-
-                    self.clusters.append((curr_idx, C))  # assign to a cluster
-                    current_stack.update(neigh_indexes)  # add neighbours to a stack
-
-                elif(tipo==1):
-                    self.clusters((curr_idx, C))
                     continue
 
-                elif(tipo==2):
-                    self.clusters((curr_idx,0))
+                unvisited.remove(curr_idx)  # marcar el punto actual como visitado
+                neigh_indexes = set(neigh_indexes) & set(unvisited)  # look at only unvisited points   duda
+
+                if tipo == 0:  # si es core
+                    # marcar que se ha obtenido el primer punto válido del cluster
+                    # a partir de ahora se podrán evaluar los border points como puntos válidos
+                    primer_pto = False
+                    self.clusters.append((curr_idx, clusterId))  # añadir al cluster actual
+                    current_stack.update(neigh_indexes)  # añadir los vecinos a la pila para posteriormente expandirlos
+
+                elif tipo == 1:  # si es core
+                    self.clusters((curr_idx, clusterId))  # añadir al cluster actual
                     continue
 
-            if not first_point:
-                C+=1
+                elif tipo == 2:  # si es outlier
+                    self.clusters((curr_idx, 0))  # añadir al cluster de los outilers (id=0)
+                    continue
+
+            if not primer_pto:  # si al menos hay un cluster creado
+                # cuando se haya completado el cluster y no queden puntos al alcance, se definirá otro cluster
+                clusterId += 1
+
         return self.clusters
 
     def predict(self, x):
-        #Hacerle lo que haga falta
+        """
+        input: x --> nueva instancia a clasificar
+        return: el id del cluster al que pertenece x       
+        """
+
+        # Hacerle lo que haga falta
+
         vecinos = []
-        for b in self.df:
+        nInstanciasCl = {}  # dict(clusterId,numInstancias)
+        cl = dict(self.clusters)  # copiar el puntero
+
+        for b in self.df:  # obtener la lista de vecinos de x
             dist = np.linalg.norm(x - b)
-            if (dist <= self.epsilon):
+            if dist <= self.epsilon:
                 vecinos.append(b)
-        count = {}
-        cl = dict(self.clusters)
-        for vecino in vecinos:
-            if cl[vecino] not in count:
-                count[cl[vecino]] = 1
+
+        for vecino in vecinos:  # recuento de vecinos en clusters
+            if cl[vecino] not in nInstanciasCl:
+                nInstanciasCl[cl[vecino]] = 1
             else:
-                count[cl[vecino]]+=1
+                nInstanciasCl[cl[vecino]] += 1
 
-        valores = count.values()
-        keys = count.keys()
-        maximo = max(valores)
-        return keys(valores.index(maximo))
+        recuento = nInstanciasCl.values()
+        maximo = max(recuento)
+        keys = nInstanciasCl.keys()
 
+        return keys(recuento.index(maximo))  # keys(recuento(maximo).index)   duda
 
 
 def obtenerVecinos(epsilon, nmpr, df, index):
     a = df.iloc[index]
     a = a.to_numpy()
     vecinos = []
+
     for b in df:
-        dist = np.linalg.norm(a-b)
-        if (dist <=epsilon):
+        dist = np.linalg.norm(a - b)
+        if dist <= epsilon:
             vecinos.append(b)
 
-    if len(vecinos) >= nmpr:
-        return (vecinos.index, 0)
+    if len(vecinos) >= nmpr:  # core
+        return vecinos.index, 0
 
-    elif (len(vecinos) < nmpr) and len(vecinos) > 0:
-        return (vecinos.index, 1)
+    elif (len(vecinos) < nmpr) and len(vecinos) > 0:  # edge
+        return vecinos.index, 1
 
-    elif len(vecinos) == 0:
-        return (vecinos.index, 2)
+    elif len(vecinos) == 0:  # outlier
+        return vecinos.index, 2
