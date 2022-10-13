@@ -26,9 +26,10 @@ class DBScan:
         clusterId = 1
         current_stack = set()
         unvisited = list(df.index)
-        primer_pto = True
 
         while len(unvisited) != 0:  # recorrer todos los puntos no visitados
+            # marcamos el primer punto de cada cluster para el caso crítico con los border points
+            primer_pto = True
 
             # añadir un punto aleatorio no visitado para explorarlo
             current_stack.add(random.choice(unvisited))
@@ -112,7 +113,7 @@ def obtenerVecinos(epsilon, nmpr, df, index):
         b = df.iloc[i]
         b = b.to_numpy()
         dist = np.linalg.norm(a - b)
-        if dist <= epsilon:
+        if dist <= epsilon and i!=index:
             vecinos = vecinos.append(df.iloc[i])
 
     if len(vecinos) >= nmpr:  # core

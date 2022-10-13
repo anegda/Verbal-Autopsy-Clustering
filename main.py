@@ -20,7 +20,6 @@ data = pd.DataFrame(X, columns = ["X", "Y"] )
 
 dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(eps, minPts, data)
-print(clusters)
 idx , cluster = list(zip(*clusters))
 cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 
