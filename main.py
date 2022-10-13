@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import DBSCAN
 from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
 
 f="datasets/train.csv"
 ml_dataset = pd.read_csv(f)
@@ -19,3 +20,17 @@ data = pd.DataFrame(X, columns = ["X", "Y"] )
 
 dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(eps, minPts, data)
+print(clusters)
+idx , cluster = list(zip(*clusters))
+cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
+
+plt.figure(figsize=(10,7))
+for clust in np.unique(cluster):
+    plt.scatter(X[cluster_df["idx"][cluster_df["cluster"] == clust].values, 0], X[cluster_df["idx"][cluster_df["cluster"] == clust].values, 1], s=10, label=f"Cluster{clust}")
+
+plt.legend([f"Cluster {clust}" for clust in np.unique(cluster)], loc ="lower right")
+plt.title('Clustered Data')
+plt.xlabel('X')
+plt.ylabel('Y')
+
+plt.show()

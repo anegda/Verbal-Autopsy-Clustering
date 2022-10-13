@@ -1,7 +1,8 @@
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 import numpy as np
 import random
-
 
 class DBScan:
     def __init__(self):
@@ -40,19 +41,16 @@ class DBScan:
                 # obtener los vecinos del punto actual y el tipo de punto actual (core, edge, outlier)
                 neigh_indexes, tipo = obtenerVecinos(epsilon, nmpr, df, curr_idx)
 
-                if tipo == 1 & primer_pto:  # si el primer punto es un border point
+                if tipo == 1 and primer_pto:  # si el primer punto es un border point
                     # marcar el punto actual y a sus vecinos como outliers
                     self.clusters.append((curr_idx, 0))
-                    self.clusters.extend(list(zip(vecinos_idx, [0 for _ in range(len(vecinos_idx))])))
-
+                    self.clusters.extend(list(zip(neigh_indexes, [0 for _ in range(len(neigh_indexes))])))
                     # marcar el punto actual y a sus vecinos como visitados
                     unvisited.remove(curr_idx)
-                    unvisited = [e for e in unvisited if e not in vecinos_idx]
+                    unvisited = [e for e in unvisited if e not in neigh_indexes]
                     continue
 
                 unvisited.remove(curr_idx)  # marcar el punto actual como visitado
-                print(unvisited)
-                print(neigh_indexes)
                 neigh_indexes = set(neigh_indexes) & set(unvisited)  # look at only unvisited points   duda
 
                 if tipo == 0:  # si es core
