@@ -107,10 +107,12 @@ class DBScan:
 
 def obtenerVecinos(epsilon, nmpr, df, index):
     a = df.iloc[index]
+    #a = np.array(a)
     a = a.to_numpy()
     vecinos = pd.DataFrame()
     for i in range(len(df)):
-        b = df.iloc[i]
+        b = df.iloc[i]      #PARA EL EJEMPLO
+        #b = np.array(b)    #PARA NUESTRO DATASET
         b = b.to_numpy()
         dist = np.linalg.norm(a - b)
         if dist <= epsilon and i!=index:
