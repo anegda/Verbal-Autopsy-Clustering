@@ -38,7 +38,7 @@ class DBScan:
                 curr_idx = current_stack.pop()  # instancia a examinar y expandir
 
                 # obtener los vecinos del punto actual y el tipo de punto actual (core, edge, outlier)
-                vecinos_idx, tipo = obtenerVecinos(epsilon, nmpr, df, curr_idx)
+                neigh_indexes, tipo = obtenerVecinos(epsilon, nmpr, df, curr_idx)
 
                 if tipo == 1 & primer_pto:  # si el primer punto es un border point
                     # marcar el punto actual y a sus vecinos como outliers
@@ -51,6 +51,8 @@ class DBScan:
                     continue
 
                 unvisited.remove(curr_idx)  # marcar el punto actual como visitado
+                print(unvisited)
+                print(neigh_indexes)
                 neigh_indexes = set(neigh_indexes) & set(unvisited)  # look at only unvisited points   duda
 
                 if tipo == 0:  # si es core
@@ -61,11 +63,11 @@ class DBScan:
                     current_stack.update(neigh_indexes)  # añadir los vecinos a la pila para posteriormente expandirlos
 
                 elif tipo == 1:  # si es core
-                    self.clusters((curr_idx, clusterId))  # añadir al cluster actual
+                    self.clusters.append((curr_idx, clusterId))  # añadir al cluster actual
                     continue
 
                 elif tipo == 2:  # si es outlier
-                    self.clusters((curr_idx, 0))  # añadir al cluster de los outilers (id=0)
+                    self.clusters.append((curr_idx, 0))  # añadir al cluster de los outilers (id=0)
                     continue
 
             if not primer_pto:  # si al menos hay un cluster creado
@@ -107,12 +109,13 @@ class DBScan:
 def obtenerVecinos(epsilon, nmpr, df, index):
     a = df.iloc[index]
     a = a.to_numpy()
-    vecinos = []
-
-    for b in df:
+    vecinos = pd.DataFrame()
+    for i in range(len(df)):
+        b = df.iloc[i]
+        b = b.to_numpy()
         dist = np.linalg.norm(a - b)
         if dist <= epsilon:
-            vecinos.append(b)
+            vecinos = vecinos.append(df.iloc[i])
 
     if len(vecinos) >= nmpr:  # core
         return vecinos.index, 0
