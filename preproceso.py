@@ -7,6 +7,7 @@ from nltk.stem import SnowballStemmer
 from nltk.tokenize import ToktokTokenizer
 from gensim.corpora import Dictionary
 from gensim.models import LdaModel
+from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
 nltk.download("stopwords")
@@ -64,7 +65,37 @@ def topicosReview(cuerpo, indice_review):
 
     return dist_contrib
 
-def preproceso(df, num_Topics):
+def topicosTest(review, diccionario):
+    df = review[["open_response"]]
+
+    # 1.- Limpiamos (quitar caracteres especiaes, minúsculas...)
+    df["Tokens"] = df.open_response.apply(limpiar_texto)
+
+    # 2.- Tokenizamos
+    tokenizer = ToktokTokenizer()
+    df["Tokens"] = df.Tokens.apply(tokenizer.tokenize)
+
+    # 3.- Eliminar stopwords y digitos
+    df["Tokens"] = df.Tokens.apply(eliminar_stopwords)
+
+    # 4.- ESTEMIZAR / LEMATIZAR ???
+    df["Tokens"] = df.Tokens.apply(estemizar)
+
+    diccionario.filter_extremes(no_below=2, no_above = 0.8)
+    cuerpo = [diccionario.doc2bow(review) for review in df.Tokens]
+
+    documents = df["open_response"]
+    tf_vectorizer = CountVectorizer(max_df=0.95, min_df=2, stop_words="english")
+    tf_vectorizer.fit_transform(documents.values.astype(str))
+
+    topicos = []
+    for i in range (len(documents)):
+        topicos.append(topicosReview(cuerpo, i))
+
+    df["Topicos"] = topicos
+    return df
+
+def topicosTrain(df, num_Topics):
     # ---> Parte 1: https://elmundodelosdatos.com/topic-modeling-gensim-fundamentos-preprocesamiento-textos/
     #ruta = str(input("Introduce el path relativo (EJ: ./datasets/nombre.csv) :"))
     df = df[["open_response"]]
@@ -101,7 +132,6 @@ def preproceso(df, num_Topics):
     # BOW de una review
     # print(corpus[5])
 
-    from sklearn.feature_extraction.text import CountVectorizer
     documents = df["open_response"]
     tf_vectorizer = CountVectorizer(max_df=0.95, min_df=2, stop_words="english")
     tf_vectorizer.fit_transform(documents.values.astype(str))
@@ -120,5 +150,5 @@ def preproceso(df, num_Topics):
         topicos.append(topicosReview(cuerpo, i))
     df["Topicos"] = topicos
 
-    return df, cuerpo
+    return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico

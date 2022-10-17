@@ -8,7 +8,7 @@ import preproceso
 f="datasets/train.csv"
 df = pd.read_csv(f)
 df = df.head(100)
-df, cuerpo = preproceso.preproceso(df, 2)
+df, diccionario = preproceso.topicosTrain(df, 2)
 #DE AQUÍ PARA ABAJO PASA ALGO RARO Y NO DEBERÍA
 
 dbscan = DBSCAN.DBScan()
@@ -20,6 +20,13 @@ resultados["Indice"] = idx
 resultados["Cluster"] = cluster
 resultados.to_csv('Prueba.csv')
 cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
+
+
+#INSERTAR DICCIONARIO
+fTest = "datasets/test.csv"
+dfTest = pd.read_csv(fTest)
+dfTest = preproceso.topicosTest(dfTest, diccionario)
+print(dfTest.head())
 
 """
 #EJEMPLO!!
