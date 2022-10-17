@@ -26,7 +26,6 @@ class DBScan:
         clusterId = 1
         current_stack = set()
         unvisited = list(df.index)
-        print(df.head())
 
         while len(unvisited) != 0:  # recorrer todos los puntos no visitados
             # marcamos el primer punto de cada cluster para el caso crítico con los border points
@@ -84,26 +83,34 @@ class DBScan:
 
         # Hacerle lo que haga falta
 
-        vecinos = []
+        vecinos = pd.DataFrame()
         nInstanciasCl = {}  # dict(clusterId,numInstancias)
         cl = dict(self.clusters)  # copiar el puntero
+        x = x["Topicos"]
+        x = np.array(x)
 
-        for b in self.df:  # obtener la lista de vecinos de x
+        for i in range(len(self.df)):  # obtener la lista de vecinos de x
+            b = self.df.iloc[i]
+            b = b["Topicos"]
+            b = np.array(b)
             dist = np.linalg.norm(x - b)
             if dist <= self.epsilon:
-                vecinos.append(b)
+                vecinos.append(self.df.iloc[i])
 
-        for vecino in vecinos:  # recuento de vecinos en clusters
+        for vecino in vecinos.index:  # recuento de vecinos en clusters
             if cl[vecino] not in nInstanciasCl:
                 nInstanciasCl[cl[vecino]] = 1
             else:
                 nInstanciasCl[cl[vecino]] += 1
 
-        recuento = nInstanciasCl.values()
-        maximo = max(recuento)
-        keys = nInstanciasCl.keys()
+        if(len(vecinos.index)==0):
+            return 0
+        else:
+            recuento = nInstanciasCl.values()
+            maximo = max(recuento)
+            keys = nInstanciasCl.keys()
 
-        return keys(recuento.index(maximo))  # keys(recuento(maximo).index)   duda
+            return keys(recuento.index(maximo))  # keys(recuento(maximo).index)   duda
 
 
 def obtenerVecinos(epsilon, nmpr, df, index):

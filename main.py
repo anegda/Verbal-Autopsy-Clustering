@@ -14,7 +14,6 @@ df, diccionario = preproceso.topicosTrain(df, 2)
 dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(0.01, 3, df)
 idx , cluster = list(zip(*clusters))
-print(sorted(list(idx)))
 resultados = pd.DataFrame()
 resultados["Indice"] = idx
 resultados["Cluster"] = cluster
@@ -26,8 +25,9 @@ cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 fTest = "datasets/test.csv"
 dfTest = pd.read_csv(fTest)
 dfTest = preproceso.topicosTest(dfTest, diccionario)
-print(dfTest.head())
-
+for i in range(len(dfTest)):
+    cluster = dbscan.predict(dfTest.iloc[i])
+    print(cluster)
 """
 #EJEMPLO!!
 from sklearn.datasets import make_blobs
