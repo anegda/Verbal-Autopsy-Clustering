@@ -8,18 +8,20 @@ import preproceso
 f="datasets/train.csv"
 df = pd.read_csv(f)
 df = df.head(100)
-df, cuerpo = preproceso.preproceso(df, 5)
+df, cuerpo = preproceso.preproceso(df, 2)
 #DE AQUÍ PARA ABAJO PASA ALGO RARO Y NO DEBERÍA
-"""
-data = df["Topicos"]
-dbscan = DBSCAN.DBScan()
-clusters = dbscan.fit(eps, minPts, data)
-idx , cluster = list(zip(*clusters))
-df["cluster"] = cluster
-print(df.head())
-df.to_csv('Prueba.csv')
-cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])"""
 
+dbscan = DBSCAN.DBScan()
+clusters = dbscan.fit(0.01, 3, df)
+idx , cluster = list(zip(*clusters))
+print(sorted(list(idx)))
+resultados = pd.DataFrame()
+resultados["Indice"] = idx
+resultados["Cluster"] = cluster
+resultados.to_csv('Prueba.csv')
+cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
+
+"""
 #EJEMPLO!!
 from sklearn.datasets import make_blobs
 import matplotlib.pyplot as plt
@@ -48,3 +50,4 @@ plt.xlabel('X')
 plt.ylabel('Y')
 
 plt.show()
+"""
