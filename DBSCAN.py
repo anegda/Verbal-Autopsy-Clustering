@@ -8,6 +8,7 @@ class DBScan:
     def __init__(self):
         # inicializacion de las variables locales
         self.clusters = []  #clusers(instanciaId, clusterId)
+        self.tipos = [] #(instanciaId, tipoInstancia) => 0 core, 1 border, 2 outlier
         self.epsilon = 0
         self.nmpr = 0
         self.df = []
@@ -45,7 +46,9 @@ class DBScan:
                 if tipo == 1 and primer_pto:  # si el primer punto es un border point
                     # marcar el punto actual y a sus vecinos como outliers
                     self.clusters.append((curr_idx, 0))
+                    self.tipos.append((curr_idx, 1))
                     self.clusters.extend(list(zip(neigh_indexes, [0 for _ in range(len(neigh_indexes))])))
+                    self.tipos.extend(list(zip(neigh_indexes, [1 for _ in range(len(neigh_indexes))])))
                     # marcar el punto actual y a sus vecinos como visitados
                     unvisited.remove(curr_idx)
                     unvisited = [e for e in unvisited if e not in neigh_indexes]
@@ -59,14 +62,17 @@ class DBScan:
                     # a partir de ahora se podrán evaluar los border points como puntos válidos
                     primer_pto = False
                     self.clusters.append((curr_idx, clusterId))  # añadir al cluster actual
+                    self.tipos.append((curr_idx, tipo))     # indicamos que este punto es un core point (útil para el predict)
                     current_stack.update(neigh_indexes)  # añadir los vecinos a la pila para posteriormente expandirlos
 
                 elif tipo == 1:  # si es core
                     self.clusters.append((curr_idx, clusterId))  # añadir al cluster actual
+                    self.tipos.append((curr_idx, tipo))
                     continue
 
                 elif tipo == 2:  # si es outlier
                     self.clusters.append((curr_idx, 0))  # añadir al cluster de los outilers (id=0)
+                    self.tipos.append((curr_idx, tipo))
                     continue
 
             if not primer_pto:  # si al menos hay un cluster creado
@@ -80,12 +86,11 @@ class DBScan:
         input: x --> nueva instancia a clasificar
         return: el id del cluster al que pertenece x       
         """
-
-        # Hacerle lo que haga falta
-
         vecinos = pd.DataFrame()
         nInstanciasCl = {}  # dict(clusterId,numInstancias)
         cl = dict(self.clusters)  # copiar el puntero
+        tipos = dict(self.tipos)
+
         x = x["Topicos"]
         x = np.array(x)
 
@@ -95,22 +100,22 @@ class DBScan:
             b = np.array(b)
             dist = np.linalg.norm(x - b)
             if dist <= self.epsilon:
-                vecinos.append(self.df.iloc[i])
+                vecinos = vecinos.append(self.df.iloc[i])
+        for vecino in vecinos:  # recuento de vecinos en clusters
+            if tipos[vecino] == 0:                      #solo tener en cuenta los corepoints
+                if cl[vecino] not in nInstanciasCl:
+                    nInstanciasCl[cl[vecino]] = 1
+                else:
+                    nInstanciasCl[cl[vecino]] += 1
 
-        for vecino in vecinos.index:  # recuento de vecinos en clusters
-            if cl[vecino] not in nInstanciasCl:
-                nInstanciasCl[cl[vecino]] = 1
-            else:
-                nInstanciasCl[cl[vecino]] += 1
-
-        if(len(vecinos.index)==0):
+        if(len(nInstanciasCl.values())==0):
             return 0
         else:
-            recuento = nInstanciasCl.values()
+            recuento = [i for i in nInstanciasCl.values()]
             maximo = max(recuento)
-            keys = nInstanciasCl.keys()
+            keys = [i for i in nInstanciasCl.keys()]
 
-            return keys(recuento.index(maximo))  # keys(recuento(maximo).index)   duda
+            return keys[recuento.index(maximo)]  # keys(recuento(maximo).index)   duda
 
 
 def obtenerVecinos(epsilon, nmpr, df, index):

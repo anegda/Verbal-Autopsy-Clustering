@@ -9,7 +9,6 @@ f="datasets/train.csv"
 df = pd.read_csv(f)
 df = df.head(100)
 df, diccionario = preproceso.topicosTrain(df, 2)
-#DE AQUÍ PARA ABAJO PASA ALGO RARO Y NO DEBERÍA
 
 dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(0.01, 3, df)
@@ -17,7 +16,7 @@ idx , cluster = list(zip(*clusters))
 resultados = pd.DataFrame()
 resultados["Indice"] = idx
 resultados["Cluster"] = cluster
-resultados.to_csv('Prueba.csv')
+resultados.to_csv('Resultados/ResultadosTrain.csv')
 cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 
 
@@ -25,9 +24,21 @@ cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 fTest = "datasets/test.csv"
 dfTest = pd.read_csv(fTest)
 dfTest = preproceso.topicosTest(dfTest, diccionario)
+print(dfTest.head())
+
+indicesTest = []
+clustersTest = []
 for i in range(len(dfTest)):
     cluster = dbscan.predict(dfTest.iloc[i])
-    print(cluster)
+    indicesTest.append(dfTest.iloc[i]["newid"])
+    clustersTest.append(cluster)
+
+resultadosTest = pd.DataFrame()
+i = np.array(indicesTest)
+resultadosTest["newid"] = np.array(indicesTest)
+resultadosTest["Cluster"] = np.array(clustersTest).tolist()
+resultadosTest.to_csv('Resultados/ResultadosTest.csv')
+
 """
 #EJEMPLO!!
 from sklearn.datasets import make_blobs

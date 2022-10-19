@@ -66,6 +66,7 @@ def topicosReview(cuerpo, indice_review):
     return dist_contrib
 
 def topicosTest(review, diccionario):
+    dfOld = review
     df = review[["open_response"]]
 
     # 1.- Limpiamos (quitar caracteres especiaes, minúsculas...)
@@ -93,11 +94,14 @@ def topicosTest(review, diccionario):
         topicos.append(topicosReview(cuerpo, i))
 
     df["Topicos"] = topicos
+    df["newid"] = dfOld["newid"]  # guardamos los ids
+
     return df
 
 def topicosTrain(df, num_Topics):
     # ---> Parte 1: https://elmundodelosdatos.com/topic-modeling-gensim-fundamentos-preprocesamiento-textos/
     #ruta = str(input("Introduce el path relativo (EJ: ./datasets/nombre.csv) :"))
+    dfOld = df
     df = df[["open_response"]]
 
     # 1.- Limpiamos (quitar caracteres especiaes, minúsculas...)
@@ -149,6 +153,8 @@ def topicosTrain(df, num_Topics):
     for i in range (len(documents)):
         topicos.append(topicosReview(cuerpo, i))
     df["Topicos"] = topicos
+
+    df["newid"] = dfOld["newid"]    #guardamos los ids
 
     return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico
