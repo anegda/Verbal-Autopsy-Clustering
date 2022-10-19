@@ -101,7 +101,7 @@ class DBScan:
             dist = np.linalg.norm(x - b)
             if dist <= self.epsilon:
                 vecinos = vecinos.append(self.df.iloc[i])
-        for vecino in vecinos:  # recuento de vecinos en clusters
+        for vecino in vecinos.index:  # recuento de vecinos en clusters
             if tipos[vecino] == 0:                      #solo tener en cuenta los corepoints
                 if cl[vecino] not in nInstanciasCl:
                     nInstanciasCl[cl[vecino]] = 1

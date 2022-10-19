@@ -14,7 +14,11 @@ dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(0.01, 3, df)
 idx , cluster = list(zip(*clusters))
 resultados = pd.DataFrame()
+newid = []
+for i in idx:
+    newid.append(df.iloc[i]["newid"])
 resultados["Indice"] = idx
+resultados["newid"] =  np.array(newid)
 resultados["Cluster"] = cluster
 resultados.to_csv('Resultados/ResultadosTrain.csv')
 cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
@@ -24,19 +28,20 @@ cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 fTest = "datasets/test.csv"
 dfTest = pd.read_csv(fTest)
 dfTest = preproceso.topicosTest(dfTest, diccionario)
-print(dfTest.head())
 
 indicesTest = []
 clustersTest = []
+newidTest = []
 for i in range(len(dfTest)):
     cluster = dbscan.predict(dfTest.iloc[i])
-    indicesTest.append(dfTest.iloc[i]["newid"])
+    indicesTest.append(i)
+    newidTest.append(dfTest.iloc[i]["newid"])
     clustersTest.append(cluster)
 
 resultadosTest = pd.DataFrame()
-i = np.array(indicesTest)
-resultadosTest["newid"] = np.array(indicesTest)
-resultadosTest["Cluster"] = np.array(clustersTest).tolist()
+resultadosTest["Indice"] = np.array(indicesTest)
+resultadosTest["newid"] = np.array(newidTest)
+resultadosTest["Cluster"] = np.array(clustersTest)
 resultadosTest.to_csv('Resultados/ResultadosTest.csv')
 
 """
