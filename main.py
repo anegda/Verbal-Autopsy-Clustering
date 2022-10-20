@@ -4,13 +4,13 @@ import DBSCAN
 import numpy as np
 import preproceso
 
-
 f="datasets/train.csv"
 df = pd.read_csv(f)
-df = df.head(100)
+#df = df.head(5)
 df, diccionario = preproceso.topicosTrain(df, 2)
+print(df.head())
 
-dbscan = DBSCAN.DBScan()
+"""dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(0.01, 3, df)
 idx , cluster = list(zip(*clusters))
 resultados = pd.DataFrame()
@@ -42,7 +42,8 @@ resultadosTest = pd.DataFrame()
 resultadosTest["Indice"] = np.array(indicesTest)
 resultadosTest["newid"] = np.array(newidTest)
 resultadosTest["Cluster"] = np.array(clustersTest)
-resultadosTest.to_csv('Resultados/ResultadosTest.csv')
+resultadosTest.to_csv('Resultados/ResultadosTest.csv')"""
+
 
 """
 #EJEMPLO!!

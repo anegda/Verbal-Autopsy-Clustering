@@ -65,6 +65,24 @@ def topicosReview(cuerpo, indice_review):
 
     return dist_contrib
 
+def diseaseToChapter(disease):
+    #NOS BASAMOS EN ICD-11 version 02/2022: https://icd.who.int/browse11/l-m/en
+    dictDC = {"Other Non-communicable Diseases": 0,
+              "Diarrhea/Dysentery": 1, "Other Infectious Diseases": 1, "AIDS": 1, "Sepsis": 1, "Meningitis": 1, "Meningitis/Sepsis": 1, "Malaria": 1, "Encephalitis": 1, "Measles":1, "Hemorrhagic fever":1, "TB": 1,
+              "Leukemia/Lymphomas": 2, "Colorectal Cancer": 2, "Lung Cancer": 2, "Cervical Cancer": 2, "Breast Cancer": 2, "Stomach Cancer": 2, "Prostate Cancer": 2, "Esophageal Cancer": 2, "Other Cancers":2,
+              "Diabetes": 5,
+              "Epilepsy": 8,
+              "Stroke": 11, "Acute Myocardial Infarction": 11, "Other Cardiovascular Diseases": 11,
+              "Pneumonia": 12, "Asthma": 12, "COPD": 12,
+              "Cirrhosis": 13, "Other Digestive Diseases": 13,
+              "Renal Failure": 16,
+              "Preterm Delivery": 18, "Stillbirth": 18, "Maternal": 18, "Birth asphyxia": 18, "Other Defined Causes of Child Deaths": 18,
+              "Congenital malformation": 20,
+              "Bite of Venomous Animal": 22, "Poisonings": 22,
+              "Road Traffic": 23, "Falls": 23, "Homicide": 23, "Fires": 23, "Drowning": 23, "Suicide": 23, "Violent Death": 23, "Other Injuries": 23}
+
+    return dictDC[disease]
+
 def topicosTest(review, diccionario):
     dfOld = review
     df = review[["open_response"]]
@@ -101,7 +119,7 @@ def topicosTest(review, diccionario):
 def topicosTrain(df, num_Topics):
     # ---> Parte 1: https://elmundodelosdatos.com/topic-modeling-gensim-fundamentos-preprocesamiento-textos/
     #ruta = str(input("Introduce el path relativo (EJ: ./datasets/nombre.csv) :"))
-    dfOld = df
+    dfOld = df      #guardamos aqui las columnas que no modificamos pero si necesitamos posteriormente
     df = df[["open_response"]]
 
     # 1.- Limpiamos (quitar caracteres especiaes, minúsculas...)
@@ -155,6 +173,7 @@ def topicosTrain(df, num_Topics):
     df["Topicos"] = topicos
 
     df["newid"] = dfOld["newid"]    #guardamos los ids
+    df["Chapter"] = dfOld["gs_text34"].apply(diseaseToChapter)  #guardamos los chapters
 
     return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico
