@@ -1,4 +1,7 @@
 import pandas as pd
+
+import evaluacion
+
 pd.options.mode.chained_assignment = None
 import DBSCAN
 import numpy as np
@@ -6,24 +9,32 @@ import preproceso
 
 f="datasets/train.csv"
 df = pd.read_csv(f)
-#df = df.head(5)
+df = df.head(100)
 df, diccionario = preproceso.topicosTrain(df, 2)
 print(df.head())
 
 dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(0.01, 3, df)
+clusters = sorted(clusters, key=lambda x: x[0])
+referencias = evaluacion.etiqueta_significativa(clusters, df["Chapter"])
 idx , cluster = list(zip(*clusters))
+
+evaluacion.evaluar(referencias, clusters, df["Chapter"])
+
 resultados = pd.DataFrame()
 newid = []
+chapters = []
 for i in idx:
     newid.append(df.iloc[i]["newid"])
+    chapters.append(df.iloc[i]["Chapter"])
 resultados["Indice"] = idx
 resultados["newid"] =  np.array(newid)
 resultados["Cluster"] = cluster
+resultados["Chapter"] = np.array(chapters)
 resultados.to_csv('Resultados/ResultadosTrain.csv')
 cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 
-
+"""
 #INSERTAR DICCIONARIO
 fTest = "datasets/test.csv"
 dfTest = pd.read_csv(fTest)
@@ -43,7 +54,7 @@ resultadosTest["Indice"] = np.array(indicesTest)
 resultadosTest["newid"] = np.array(newidTest)
 resultadosTest["Cluster"] = np.array(clustersTest)
 resultadosTest.to_csv('Resultados/ResultadosTest.csv')
-
+"""
 
 """
 #EJEMPLO!!

@@ -42,6 +42,7 @@ class DBScan:
 
                 # obtener los vecinos del punto actual y el tipo de punto actual (core, edge, outlier)
                 neigh_indexes, tipo = obtenerVecinos(epsilon, nmpr, df, curr_idx)
+                neigh_indexes = set(neigh_indexes) & set(unvisited)  # look at only unvisited points   duda
 
                 if tipo == 1 and primer_pto:  # si el primer punto es un border point
                     # marcar el punto actual y a sus vecinos como outliers
@@ -55,7 +56,6 @@ class DBScan:
                     continue
 
                 unvisited.remove(curr_idx)  # marcar el punto actual como visitado
-                neigh_indexes = set(neigh_indexes) & set(unvisited)  # look at only unvisited points   duda
 
                 if tipo == 0:  # si es core
                     # marcar que se ha obtenido el primer punto válido del cluster

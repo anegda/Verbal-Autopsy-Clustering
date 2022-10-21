@@ -67,7 +67,7 @@ def topicosReview(cuerpo, indice_review):
 
 def diseaseToChapter(disease):
     #NOS BASAMOS EN ICD-11 version 02/2022: https://icd.who.int/browse11/l-m/en
-    dictDC = {"Other Non-communicable Diseases": 0,
+    dictDC = {"Other Non-communicable Diseases": 20,
               "Diarrhea/Dysentery": 1, "Other Infectious Diseases": 1, "AIDS": 1, "Sepsis": 1, "Meningitis": 1, "Meningitis/Sepsis": 1, "Malaria": 1, "Encephalitis": 1, "Measles":1, "Hemorrhagic fever":1, "TB": 1,
               "Leukemia/Lymphomas": 2, "Colorectal Cancer": 2, "Lung Cancer": 2, "Cervical Cancer": 2, "Breast Cancer": 2, "Stomach Cancer": 2, "Prostate Cancer": 2, "Esophageal Cancer": 2, "Other Cancers":2,
               "Diabetes": 5,
