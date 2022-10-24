@@ -9,13 +9,14 @@ import preproceso
 
 f="datasets/train.csv"
 df = pd.read_csv(f)
-df = df.head(100)
+#df = df.head(2000)
 df, diccionario = preproceso.topicosTrain(df, 2)
 print(df.head())
 
 dbscan = DBSCAN.DBScan()
-clusters = dbscan.fit(0.01, 3, df)
+clusters = dbscan.fit(0.0005, 50, df)
 clusters = sorted(clusters, key=lambda x: x[0])
+print(clusters)
 referencias = evaluacion.etiqueta_significativa(clusters, df["Chapter"])
 idx , cluster = list(zip(*clusters))
 

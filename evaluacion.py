@@ -9,8 +9,9 @@ def etiqueta_significativa(clusters, y_train):
     reference_labels = {}
     dic = dict(clusters)
     clustersTot = [i for i in dic.values()]
-    numCluster = max(clustersTot)
-    for i in range(numCluster+1):
+    numClusterMax = max(clustersTot)
+    numClusterMin = min(clustersTot)
+    for i in range(numClusterMin, numClusterMax+1):
         capCount = {}
         for id in dic.keys():
             if dic[id] == i:
@@ -19,6 +20,7 @@ def etiqueta_significativa(clusters, y_train):
                 else:
                     capCount[y_train[id]]=1
 
+        print(capCount)
         recuento = [i for i in capCount.values()]
         maximo = max(recuento)
         capitulos = [i for i in capCount.keys()]
