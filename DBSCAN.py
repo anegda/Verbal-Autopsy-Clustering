@@ -137,10 +137,10 @@ def obtenerVecinos(epsilon, nmpr, df, index):
         return vecinos.index, 2
 
 def distanciaEuclidea(a, b):
-    a = a.to_numpy()  # PARA EL EJEMPLO
-    #a = np.array(a)
-    b = b.to_numpy() # PARA EL EJEMPLO
-    #b = np.array(b)
+    #a = a.to_numpy()  # PARA EL EJEMPLO
+    a = np.array(a)
+    #b = b.to_numpy() # PARA EL EJEMPLO
+    b = np.array(b)
     return np.linalg.norm(a - b)
 
 def distanciaTopico(a, b):
