@@ -90,15 +90,13 @@ class DBScan:
         nInstanciasCl = {}  # dict(clusterId,numInstancias)
         cl = dict(self.clusters)  # copiar el puntero
         tipos = dict(self.tipos)
-
         x = x["Topicos"]
-        x = np.array(x)
 
         for i in range(len(self.df)):  # obtener la lista de vecinos de x
             b = self.df.iloc[i]
             b = b["Topicos"]
-            b = np.array(b)
-            dist = np.linalg.norm(x - b)
+
+            dist = distanciaEuclidea(x, b)
             if dist <= self.epsilon:
                 vecinos = vecinos.append(self.df.iloc[i])
         for vecino in vecinos.index:  # recuento de vecinos en clusters
@@ -122,15 +120,11 @@ def obtenerVecinos(epsilon, nmpr, df, index):
     a = df.iloc[index]
     a = a["Topicos"]
 
-    a = np.array(a)
-    #a = a.to_numpy()
     vecinos = pd.DataFrame()
     for i in range(len(df)):
         b = df.iloc[i]
         b = b["Topicos"]
-        b = np.array(b)    #PARA NUESTRO DATASET
-        #b = b.to_numpy()   #PARA EL EJEMPLO
-        dist = np.linalg.norm(a - b)
+        dist = distanciaEuclidea(a, b)
         if dist <= epsilon and i!=index:
             vecinos = vecinos.append(df.iloc[i])
     if len(vecinos) >= nmpr:  # core
@@ -141,3 +135,20 @@ def obtenerVecinos(epsilon, nmpr, df, index):
 
     elif len(vecinos) == 0:  # outlier
         return vecinos.index, 2
+
+def distanciaEuclidea(a, b):
+    a = a.to_numpy()  # PARA EL EJEMPLO
+    #a = np.array(a)
+    b = b.to_numpy() # PARA EL EJEMPLO
+    #b = np.array(b)
+    return np.linalg.norm(a - b)
+
+def distanciaTopico(a, b):
+    # Si el tópico más común coincide se calcula esa distancia.
+    # Sino se suma la distancia de cada tópico más común con su correspondiente en la otra instancia
+    iA = a.index(max(a))
+    iB = b.index(max(b))
+    if (iA == iB):
+        return abs(a[iA]-b[iB])
+    else:
+        return abs(a[iA]-b[iA]) + abs(a[iB]-b[iB])
