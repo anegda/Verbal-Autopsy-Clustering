@@ -24,30 +24,31 @@ df, diccionario = preproceso.topicosTrain(df, numTopics)
 topics = df["Topicos"]
 topicDocs = np.zeros(shape=(df.shape[0], 20))
 
-idx = 0
-for fila in topics:
-    topicDocs[idx] = np.array(fila)
-    idx += 1
+for i in range(len(df)):
+    topicDocs[i] = np.array(topics.iloc[i])
 
-for td in topicDocs:
+for i in range(len(topicDocs)):
     dists = []
+    td = topicDocs[i]
+    for j in range(len(topicDocs)):
+        if i!=j:
+            aux = topicDocs[j]
+            dst = np.linalg.norm(aux - td)
+            dists.append(dst)
 
-    for k in range(0, minPoints, 1):
-        aux = topicDocs[k]
-        dst = np.linalg.norm(aux - td)
-        dists.append(dst)
-
+    dists = sorted(dists)
+    dists = dists[:minPoints]
     distMedia = sum(dists) / len(dists)
     distMedias.append(distMedia)
 
 y = sorted(distMedias)
-print(y)
+
 # plotting
 plt.title("Line graph")
 plt.xlabel("nPoints closer than k-distance")
 plt.ylabel("k-distance")
 plt.plot(y, color ="green")
-plt.show()
+plt.savefig('Imagenes/kdistance.png')
 
 
 
