@@ -31,4 +31,5 @@ distances, indices = nbrs.kneighbors(X)
 distances = np.sort(distances, axis=0)
 distances = distances[:,1]
 plt.plot(distances)
-plt.show()
+#plt.show()
+plt.savefig('Imagenes/epsdistance.png')
