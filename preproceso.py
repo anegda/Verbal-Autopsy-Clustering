@@ -145,7 +145,7 @@ def topicosTrain(df, num_Topics):
     # Reducimos el diccionario filtrando las palabras mas raras o demasiado frecuentes
     # no_below = mantener tokens que se encuentran en el a menos x documentos
     # no_above = mantener tokens que se encuentran en no mas del 80% de los documentos
-    diccionario.filter_extremes(no_below=2, no_above = 0.8)
+    diccionario.filter_extremes(no_below=2, no_above = 0.75)
     #print(f'Número de tokens: {len(diccionario)}')
 
     # Creamos el corpus (por cada token en el df) QUE ES UN ARRAY BOW
@@ -160,7 +160,7 @@ def topicosTrain(df, num_Topics):
 
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
                num_topics=num_Topics, random_state=42,
-               chunksize=1000, passes=1,
+               chunksize=1000,
                alpha=2, eta=2)
 
     # Guardo el modelo
@@ -174,6 +174,9 @@ def topicosTrain(df, num_Topics):
 
     df["newid"] = dfOld["newid"]    #guardamos los ids
     df["Chapter"] = dfOld["gs_text34"].apply(diseaseToChapter)  #guardamos los chapters
+
+    for i in lda.print_topics(-1):
+        print(i)
 
     return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico

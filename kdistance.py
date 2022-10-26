@@ -1,22 +1,19 @@
-import sys
 import numpy as np
 import pandas as pd
-from nltk.metrics import distance
-from sklearn.datasets import make_blobs
 pd.options.mode.chained_assignment = None
-from sklearn.neighbors import NearestNeighbors
 from matplotlib import pyplot as plt
 import seaborn as sns
 
 import preproceso
+import DBSCAN
 
 sns.set()
 
 f = "datasets/train.csv"
 df = pd.read_csv(f)
-#df = df.head(1000)
+df = df.head(500)
 numTopics = 20
-minPoints = 2*numTopics
+minPoints = (numTopics+1)
 distMedias = []
 df, diccionario = preproceso.topicosTrain(df, numTopics)
 #print(df)
@@ -38,6 +35,7 @@ for i in range(len(topicDocs)):
 
     dists = sorted(dists)
     dists = dists[:minPoints]
+    print(len(dists))
     distMedia = sum(dists) / len(dists)
     distMedias.append(distMedia)
 
@@ -48,7 +46,7 @@ plt.title("Line graph")
 plt.xlabel("nPoints closer than k-distance")
 plt.ylabel("k-distance")
 plt.plot(y, color ="green")
-plt.savefig('Imagenes/kdistance.png')
+plt.savefig('Imagenes/kdistance1000.png')
 
 
 
