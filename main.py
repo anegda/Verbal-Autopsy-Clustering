@@ -9,7 +9,7 @@ f="datasets/train.csv"
 df = pd.read_csv(f)
 df, diccionario = preproceso.topicosTrain(df, 20)
 df.to_csv('Resultados/ResultadosPreproceso.csv')
-
+df = df.head(500)
 """
 dbscan = DBSCAN.DBScan()
 clusters = dbscan.fit(0.01, 40, df)

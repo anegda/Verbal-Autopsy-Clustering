@@ -34,7 +34,13 @@ def lematizar(tokens):
     return [wnl.lemmatize(token) for token in tokens]
 
 def eliminar_palabras_concretas(tokens):
-    palabras_concretas = {"hospit", "die", "death", "doctor", "deceas", "person"}
+    palabras_concretas = {"hospit", "die", "death", "doctor", "deceas", "person", "servic", "nurs", "client", "peopl", "patient",           #ELEMENTOS DE HOSPITAL QUE NO APORTAN INFO SOBRE ENFERMEDAD
+                          "day", "year", "month", "april", "date", "feb", "jan", "time", "place",                                           #FECHAS QUE NO APORTAN INFO SOBRE ENFERMEDD
+                          "interview", "opinion", "thousand", "particip", "admit", "document", "inform", "explain", "said",                 #PALABRAS QUE TIENEN QUE VER CON LA ENTREVISTA
+                          "write", "commend", "done", "told", "came", "done", "think", "went", "took", "got",                               #OTROS VERBOS
+                          "even", "also", "sudden", "would", "us", "thank","alreadi",                                                       #PALABRAS QUE NO APORTAN SIGNIFICADO
+                          "caus", "due", "suffer", "felt", "consequ"}                                                                       #PALABRAS SEGUIDAS POR SINTOMAS
+
     return [token for token in tokens if token not in palabras_concretas]
 
 def estemizar(tokens):
@@ -61,13 +67,16 @@ def topicosReview(cuerpo, indice_review):
     file.close()
 
     bow_review = cuerpo[indice_review]
-
+    topicos = [0] * lda.num_topics
     # Indices de los topicos mas significativos
     #dist_indices = [topico[0] for topico in lda[bow_review]]
     # Contribución de los topicos mas significativos
-    dist_contrib = [topico[1] for topico in lda[bow_review]]
+    # dist_contrib = [topico[1] for topico in lda[bow_review]]
+    dt = lda.get_document_topics(bow_review)
+    for t in dt:
+        topicos[t[0]]=t[1]
 
-    return dist_contrib
+    return topicos
 
 def diseaseToChapter(disease):
     #NOS BASAMOS EN ICD-11 version 02/2022: https://icd.who.int/browse11/l-m/en
@@ -152,9 +161,9 @@ def topicosTrain(df, num_Topics):
     #print(f'Número de tokens: {len(diccionario)}') #mostrar el numero se palabras
 
     # Reducimos el diccionario filtrando las palabras mas raras o demasiado frecuentes
-    # no_below = mantener tokens que se encuentran en el a menos x documentos
+    # no_below = mantener tokens que se encuentran en el a menos 10% de los documentos
     # no_above = mantener tokens que se encuentran en no mas del 80% de los documentos
-    diccionario.filter_extremes(no_below=2, no_above = 0.75)
+    diccionario.filter_extremes(no_below=0.1, no_above = 0.75)
     #print(f'Número de tokens: {len(diccionario)}')
 
     # Creamos el corpus (por cada token en el df) QUE ES UN ARRAY BOW
@@ -170,7 +179,7 @@ def topicosTrain(df, num_Topics):
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
                num_topics=num_Topics, random_state=42,
                chunksize=1000,
-               alpha=0.25, eta=0.8)
+               alpha='auto', eta=0.8)
 
     # Guardo el modelo
     file = open("./modelos/lda.sav", "wb")

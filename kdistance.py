@@ -11,7 +11,6 @@ sns.set()
 
 f = "datasets/train.csv"
 df = pd.read_csv(f)
-df = df.head(500)
 numTopics = 20
 minPoints = (numTopics+1)
 distMedias = []
@@ -35,7 +34,6 @@ for i in range(len(topicDocs)):
 
     dists = sorted(dists)
     dists = dists[:minPoints]
-    print(len(dists))
     distMedia = sum(dists) / len(dists)
     distMedias.append(distMedia)
 
@@ -46,7 +44,7 @@ plt.title("Line graph")
 plt.xlabel("nPoints closer than k-distance")
 plt.ylabel("k-distance")
 plt.plot(y, color ="green")
-plt.savefig('Imagenes/kdistance1000.png')
+plt.savefig('Imagenes/kdistance.png')
 
 
 
