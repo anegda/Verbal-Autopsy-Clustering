@@ -33,6 +33,10 @@ def eliminar_stopwords(tokens):
 def lematizar(tokens):
     return [wnl.lemmatize(token) for token in tokens]
 
+def eliminar_palabras_concretas(tokens):
+    palabras_concretas = {"hospit", "die", "death", "doctor", "deceas", "person"}
+    return [token for token in tokens if token not in palabras_concretas]
+
 def estemizar(tokens):
     return [stemmer.stem(token) for token in tokens]
 
@@ -100,7 +104,10 @@ def topicosTest(review, diccionario):
     # 4.- ESTEMIZAR / LEMATIZAR ???
     df["Tokens"] = df.Tokens.apply(estemizar)
 
-    diccionario.filter_extremes(no_below=2, no_above = 0.8)
+    # 5.- ELIMINAMOS PALABRAS CONCRETAS QUE APARECEN MUCHO PERO NO APORTAN SIGNIFICADO
+    df["Tokens"] = df.Tokens.apply(eliminar_palabras_concretas)
+
+    diccionario.filter_extremes(no_below=2, no_above = 0.7)
     cuerpo = [diccionario.doc2bow(review) for review in df.Tokens]
 
     documents = df["open_response"]
@@ -136,6 +143,8 @@ def topicosTrain(df, num_Topics):
     df["Tokens"] = df.Tokens.apply(estemizar)
     #print(df.Tokens[0][0:10])
 
+    # 5.- ELIMINAMOS PALABRAS CONCRETAS QUE APARECEN MUCHO PERO NO APORTAN SIGNIFICADO
+    df["Tokens"] = df.Tokens.apply(eliminar_palabras_concretas)
 
     # ---> Parte 2: https://elmundodelosdatos.com/topic-modeling-gensim-asignacion-topicos/
     # Cargamos en el diccionario la lista de palabras que tenemos de las reviews
@@ -161,7 +170,7 @@ def topicosTrain(df, num_Topics):
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
                num_topics=num_Topics, random_state=42,
                chunksize=1000,
-               alpha=2, eta=2)
+               alpha=0.25, eta=0.8)
 
     # Guardo el modelo
     file = open("./modelos/lda.sav", "wb")
