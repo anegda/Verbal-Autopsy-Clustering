@@ -11,8 +11,9 @@ df, diccionario = preproceso.topicosTrain(df, 20)
 df.to_csv('Resultados/ResultadosPreproceso.csv')
 #df = df.head(2000)
 
-"""dbscan = DBSCAN.DBScan()
-clusters = dbscan.fit(0.06, 50, df)
+"""
+dbscan = DBSCAN.DBScan()
+clusters = dbscan.fit(0.10, 21, df)
 clusters = sorted(clusters, key=lambda x: x[0])
 print(clusters)
 referencias = evaluacion.etiqueta_significativa(clusters, df["Chapter"])
@@ -33,6 +34,7 @@ resultados["Chapter"] = np.array(chapters)
 resultados.to_csv('Resultados/ResultadosTrain.csv')
 cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 """
+
 """
 #INSERTAR DICCIONARIO
 fTest = "datasets/test.csv"
