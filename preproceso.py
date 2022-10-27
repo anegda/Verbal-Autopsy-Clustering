@@ -34,12 +34,15 @@ def lematizar(tokens):
     return [wnl.lemmatize(token) for token in tokens]
 
 def eliminar_palabras_concretas(tokens):
-    palabras_concretas = {"hospit", "die", "death", "doctor", "deceas", "person", "servic", "nurs", "client", "peopl", "patient",           #ELEMENTOS DE HOSPITAL QUE NO APORTAN INFO SOBRE ENFERMEDAD
-                          "day", "year", "month", "april", "date", "feb", "jan", "time", "place",                                           #FECHAS QUE NO APORTAN INFO SOBRE ENFERMEDD
-                          "interview", "opinion", "thousand", "particip", "admit", "document", "inform", "explain", "said",                 #PALABRAS QUE TIENEN QUE VER CON LA ENTREVISTA
-                          "write", "commend", "done", "told", "came", "done", "think", "went", "took", "got",                               #OTROS VERBOS
-                          "even", "also", "sudden", "would", "us", "thank","alreadi",                                                       #PALABRAS QUE NO APORTAN SIGNIFICADO
-                          "caus", "due", "suffer", "felt", "consequ"}                                                                       #PALABRAS SEGUIDAS POR SINTOMAS
+    palabras_concretas = {"hospit", "die", "death", "doctor", "deceas", "person", "servic", "nurs", "client", "peopl", "patient",                   #ELEMENTOS DE HOSPITAL QUE NO APORTAN INFO SOBRE ENFERMEDAD
+                          "brother", "father","respondetn","uncl","famili","member","husband","son", "daughter","marriag",
+                          "day", "year", "month", "april", "date", "feb", "jan", "time", "place","later","hour",                                    #FECHAS QUE NO APORTAN INFO SOBRE ENFERMEDD
+                          "interview", "opinion", "thousand", "particip", "admit", "document", "inform", "explain", "said", "respond","interviewe",                                                                                                #PALABRAS QUE TIENEN QUE VER CON LA ENTREVISTA
+                          "write", "commend", "done", "told", "came", "done", "think", "went", "took", "got",                                       #OTROS VERBOS
+                          "brought","becam","start",
+                          "even", "also", "sudden", "would", "us", "thank","alreadi","rather","p","none","b",                                       #PALABRAS QUE NO APORTAN SIGNIFICADO
+                          "caus", "due", "suffer", "felt", "consequ"}                                                                               #PALABRAS SEGUIDAS POR SINTOMAS
+
 
     return [token for token in tokens if token not in palabras_concretas]
 
@@ -116,7 +119,7 @@ def topicosTest(review, diccionario):
     # 5.- ELIMINAMOS PALABRAS CONCRETAS QUE APARECEN MUCHO PERO NO APORTAN SIGNIFICADO
     df["Tokens"] = df.Tokens.apply(eliminar_palabras_concretas)
 
-    diccionario.filter_extremes(no_below=2, no_above = 0.7)
+    diccionario.filter_extremes(no_below=0.1, no_above = 0.7)
     cuerpo = [diccionario.doc2bow(review) for review in df.Tokens]
 
     documents = df["open_response"]
@@ -163,7 +166,7 @@ def topicosTrain(df, num_Topics):
     # Reducimos el diccionario filtrando las palabras mas raras o demasiado frecuentes
     # no_below = mantener tokens que se encuentran en el a menos 10% de los documentos
     # no_above = mantener tokens que se encuentran en no mas del 80% de los documentos
-    diccionario.filter_extremes(no_below=0.1, no_above = 0.75)
+    diccionario.filter_extremes(no_below=0.10, no_above = 0.75)
     #print(f'Número de tokens: {len(diccionario)}')
 
     # Creamos el corpus (por cada token en el df) QUE ES UN ARRAY BOW
@@ -178,8 +181,8 @@ def topicosTrain(df, num_Topics):
 
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
                num_topics=num_Topics, random_state=42,
-               chunksize=1000,
-               alpha='auto', eta=0.8)
+               chunksize=1000, passes=10,
+               alpha=0.1 , eta=0.5)
 
     # Guardo el modelo
     file = open("./modelos/lda.sav", "wb")

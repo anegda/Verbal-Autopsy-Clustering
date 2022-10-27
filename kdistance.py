@@ -18,7 +18,7 @@ df, diccionario = preproceso.topicosTrain(df, numTopics)
 #print(df)
 
 topics = df["Topicos"]
-topicDocs = np.zeros(shape=(df.shape[0], 20))
+topicDocs = np.zeros(shape=(df.shape[0], numTopics))
 
 for i in range(len(df)):
     topicDocs[i] = np.array(topics.iloc[i])
@@ -33,7 +33,7 @@ for i in range(len(topicDocs)):
             dists.append(dst)
 
     dists = sorted(dists)
-    dists = dists[:minPoints]
+    dists = dists[:(minPoints)]
     distMedia = sum(dists) / len(dists)
     distMedias.append(distMedia)
 
@@ -45,6 +45,3 @@ plt.xlabel("nPoints closer than k-distance")
 plt.ylabel("k-distance")
 plt.plot(y, color ="green")
 plt.savefig('Imagenes/kdistance.png')
-
-
-

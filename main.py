@@ -9,10 +9,10 @@ f="datasets/train.csv"
 df = pd.read_csv(f)
 df, diccionario = preproceso.topicosTrain(df, 20)
 df.to_csv('Resultados/ResultadosPreproceso.csv')
-df = df.head(500)
-"""
-dbscan = DBSCAN.DBScan()
-clusters = dbscan.fit(0.01, 40, df)
+#df = df.head(2000)
+
+"""dbscan = DBSCAN.DBScan()
+clusters = dbscan.fit(0.06, 50, df)
 clusters = sorted(clusters, key=lambda x: x[0])
 print(clusters)
 referencias = evaluacion.etiqueta_significativa(clusters, df["Chapter"])
