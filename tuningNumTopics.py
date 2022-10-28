@@ -101,32 +101,31 @@ id2word = corpora.Dictionary(data_lemmatized)
 texts = data_lemmatized
 # Term Document Frequency
 corpus = [id2word.doc2bow(text) for text in texts]
-print(corpus[0])
 
 # ITERAMOS
 grid = {}
 grid['Validation_Set'] = {}
 # Topics range
-min_topics = 2
+min_topics = 1
 max_topics = 11
 step_size = 1
 topics_range = range(min_topics, max_topics, step_size)
 # Alpha parameter
-alpha = list(np.arange(1))
+alpha = [1]
 #alpha.append('symmetric')
 #alpha.append('asymmetric')
 # Beta parameter
-beta = list(np.arange(1))
+beta = [1]
 #beta.append('symmetric')
 # Validation sets
 num_of_docs = len(corpus)
-corpus_sets = [  gensim.utils.ClippedCorpus(corpus, num_of_docs*0.25),
-    # gensim.utils.ClippedCorpus(corpus, num_of_docs*0.5),
-    # gensim.utils.ClippedCorpus(corpus, num_of_docs * 0.75),
+corpus_sets = [  gensim.utils.ClippedCorpus(corpus, int(num_of_docs*0.01)),
+    # gensim.utils.ClippedCorpus(corpus, int(num_of_docs*0.5)),
+    # gensim.utils.ClippedCorpus(corpus, int(num_of_docs * 0.75)),
     # corpus
     ]
 corpus_title = [
-    '25% corpus',
+    '1% corpus',
     #'50% corpus',
     #'75% Corpus',
     #'100% Corpus'
@@ -160,8 +159,19 @@ if 1 == 1:
                     model_results['Coherence'].append(cv)
 
                     pbar.update(1)
-    pd.DataFrame(model_results).to_csv('lda_tuning_results.csv', index=False)
+    pd.DataFrame(model_results).to_csv('Resultados/lda_tuning_resultsPrueba.csv', index=False)
     pbar.close()
+
+# Para la documentación
+'''df_results = pd.DataFrame(model_results)
+print(df_results.head())
+coherencia = df_results["Coherence"]
+num_topics = df_results["Topics"]
+
+import matplotlib.pyplot as plt
+plt.plot(num_topics, coherencia, marker = 'o')
+plt.savefig("Imagenes/numTopics.png")
+plt.show()'''
 
 
 
