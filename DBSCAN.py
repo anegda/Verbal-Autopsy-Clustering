@@ -97,14 +97,13 @@ class DBScan:
             b = b["Topicos"]
 
             dist = distanciaEuclidea(x, b)
-            if dist <= self.epsilon:
+            if dist <= self.epsilon and tipos[i]==0:
                 vecinos = vecinos.append(self.df.iloc[i])
         for vecino in vecinos.index:  # recuento de vecinos en clusters
-            if tipos[vecino] == 0:                      #solo tener en cuenta los corepoints
-                if cl[vecino] not in nInstanciasCl:
-                    nInstanciasCl[cl[vecino]] = 1
-                else:
-                    nInstanciasCl[cl[vecino]] += 1
+            if cl[vecino] not in nInstanciasCl:
+                nInstanciasCl[cl[vecino]] = 1
+            else:
+                nInstanciasCl[cl[vecino]] += 1
 
         if(len(nInstanciasCl.values())==0):
             return 0

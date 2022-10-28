@@ -56,4 +56,5 @@ def evaluar(referencias, clusters ,y_train):
     skplt.plot_confusion_matrix(labels, y_train)
     plt.xlabel("True label")
     plt.ylabel("Predicted label")
+    plt.savefig('Imagenes/matrizDeConfusion.png')
     plt.show()
