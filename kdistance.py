@@ -9,39 +9,46 @@ import DBSCAN
 
 sns.set()
 
-f = "datasets/train.csv"
-df = pd.read_csv(f)
-numTopics = 20
-minPoints = (numTopics+1)
-distMedias = []
-df, diccionario = preproceso.topicosTrain(df, numTopics)
-#print(df)
+def kdistance():
+    print("--- ELECCIÓN DE PARÁMETROS ---")
+    print("numTopics (default = 20)")
+    ntpcs = input()
+    print("minPoints (default = numTopics+1<=minPoints<=numTopics*2)")
+    mnpts = input()
 
-topics = df["Topicos"]
-topicDocs = np.zeros(shape=(df.shape[0], numTopics))
+    f = "datasets/train.csv"
+    df = pd.read_csv(f)
+    numTopics = ntpcs
+    minPoints = mnpts
+    distMedias = []
+    df, diccionario = preproceso.topicosTrain(df, numTopics)
+    #print(df)
 
-for i in range(len(df)):
-    topicDocs[i] = np.array(topics.iloc[i])
+    topics = df["Topicos"]
+    topicDocs = np.zeros(shape=(df.shape[0], numTopics))
 
-for i in range(len(topicDocs)):
-    dists = []
-    td = topicDocs[i]
-    for j in range(len(topicDocs)):
-        if i!=j:
-            aux = topicDocs[j]
-            dst = np.linalg.norm(aux - td)
-            dists.append(dst)
+    for i in range(len(df)):
+        topicDocs[i] = np.array(topics.iloc[i])
 
-    dists = sorted(dists)
-    dists = dists[:(minPoints)]
-    distMedia = sum(dists) / len(dists)
-    distMedias.append(distMedia)
+    for i in range(len(topicDocs)):
+        dists = []
+        td = topicDocs[i]
+        for j in range(len(topicDocs)):
+            if i!=j:
+                aux = topicDocs[j]
+                dst = np.linalg.norm(aux - td)
+                dists.append(dst)
 
-y = sorted(distMedias)
+        dists = sorted(dists)
+        dists = dists[:(minPoints)]
+        distMedia = sum(dists) / len(dists)
+        distMedias.append(distMedia)
 
-# plotting
-plt.title("Line graph")
-plt.xlabel("nPoints closer than k-distance")
-plt.ylabel("k-distance")
-plt.plot(y, color ="green")
-plt.savefig('Imagenes/kdistance.png')
+    y = sorted(distMedias)
+
+    # plotting
+    plt.title("Line graph")
+    plt.xlabel("nPoints closer than k-distance")
+    plt.ylabel("k-distance")
+    plt.plot(y, color ="green")
+    plt.savefig('Imagenes/kdistance.png')
