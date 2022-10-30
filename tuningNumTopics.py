@@ -106,29 +106,29 @@ corpus = [id2word.doc2bow(text) for text in texts]
 grid = {}
 grid['Validation_Set'] = {}
 # Topics range
-min_topics = 1
-max_topics = 11
-step_size = 1
+min_topics = 11
+max_topics = 42
+step_size = 2
 topics_range = range(min_topics, max_topics, step_size)
 # Alpha parameter
-alpha = [1]
-#alpha.append('symmetric')
+alpha = [0.15,0.2,0.5,0.6,0.7,0.9,1.5,1.75]
+alpha.append('auto')
 #alpha.append('asymmetric')
 # Beta parameter
-beta = [1]
-#beta.append('symmetric')
+beta = [0.15, 0.2, 0.5, 0.7, 0.9, 1.5]
+beta.append('auto')
 # Validation sets
 num_of_docs = len(corpus)
-corpus_sets = [  gensim.utils.ClippedCorpus(corpus, int(num_of_docs*0.01)),
+corpus_sets = [  #gensim.utils.ClippedCorpus(corpus, int(num_of_docs)),
     # gensim.utils.ClippedCorpus(corpus, int(num_of_docs*0.5)),
     # gensim.utils.ClippedCorpus(corpus, int(num_of_docs * 0.75)),
-    # corpus
+    corpus
     ]
 corpus_title = [
-    '1% corpus',
+    #'1% corpus',
     #'50% corpus',
     #'75% Corpus',
-    #'100% Corpus'
+    '100% Corpus'
 ]
 model_results = {'Validation_Set': [],
                  'Topics': [],
@@ -138,7 +138,7 @@ model_results = {'Validation_Set': [],
                  }
 # Can take a long time to run
 if 1 == 1:
-    pbar = tqdm.tqdm(total=540)
+    pbar = tqdm.tqdm(total=1008)
 
     # iterate through validation corpuses
     for i in range(len(corpus_sets)):
@@ -159,7 +159,7 @@ if 1 == 1:
                     model_results['Coherence'].append(cv)
 
                     pbar.update(1)
-    pd.DataFrame(model_results).to_csv('Resultados/lda_tuning_resultsPrueba.csv', index=False)
+    pd.DataFrame(model_results).to_csv('Resultados/lda_tuning_results(Ane)(40)(Impares).csv', index=False)
     pbar.close()
 
 # Para la documentación
