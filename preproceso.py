@@ -7,6 +7,9 @@ from nltk.stem import SnowballStemmer
 from nltk.tokenize import ToktokTokenizer
 from gensim.corpora import Dictionary
 from gensim.models import LdaModel
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
@@ -48,6 +51,17 @@ def eliminar_palabras_concretas(tokens):
 
 def estemizar(tokens):
     return [stemmer.stem(token) for token in tokens]
+
+def plot_difference_matplotlib(mdiff, title="", annotation=None):
+    """Helper function to plot difference between models.
+
+    Uses matplotlib as the backend."""
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(figsize=(18, 14))
+    data = ax.imshow(mdiff, cmap='RdBu_r', origin='lower')
+    plt.title(title)
+    plt.colorbar(data)
+    plt.savefig('Imagenes/topicDiff.png')
 
 def display_topics(H, W, feature_names, documents, no_top_words, no_top_documents):
     for topic_idx, topic in enumerate(H):
@@ -180,9 +194,9 @@ def topicosTrain(df, num_Topics):
     tf_vectorizer.fit_transform(documents.values.astype(str))
 
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
-               num_topics=num_Topics, random_state=42,
+               num_topics=18, random_state=42,
                chunksize=1000, passes=10,
-               alpha=0.1 , eta=0.5)
+               alpha=0.7 , eta=0.9)
 
     # Guardo el modelo
     file = open("./modelos/lda.sav", "wb")
@@ -198,6 +212,9 @@ def topicosTrain(df, num_Topics):
 
     for i in lda.print_topics(-1):
         print(i)
+
+    mdiff, annotation = lda.diff(lda, distance='jaccard', num_words=10)
+    plot_difference_matplotlib(mdiff, title="Topic difference (one model) [jaccard distance]", annotation=annotation)
 
     return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico
