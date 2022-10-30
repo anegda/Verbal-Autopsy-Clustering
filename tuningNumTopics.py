@@ -106,17 +106,17 @@ corpus = [id2word.doc2bow(text) for text in texts]
 grid = {}
 grid['Validation_Set'] = {}
 # Topics range
-min_topics = 11
-max_topics = 42
+min_topics = 10
+max_topics = 29
 step_size = 2
 topics_range = range(min_topics, max_topics, step_size)
 # Alpha parameter
-alpha = [0.15,0.2,0.5,0.6,0.7,0.9,1.5,1.75]
-alpha.append('auto')
+alpha = [0.15,0.2,0.5,0.6,0.7,0.9,1.5,1.75,2]
+#alpha.append('auto')
 #alpha.append('asymmetric')
 # Beta parameter
-beta = [0.15, 0.2, 0.5, 0.7, 0.9, 1.5]
-beta.append('auto')
+beta = [0.15, 0.2, 0.5, 0.7, 0.9, 1.5,2]
+#beta.append('auto')
 # Validation sets
 num_of_docs = len(corpus)
 corpus_sets = [  #gensim.utils.ClippedCorpus(corpus, int(num_of_docs)),
@@ -151,15 +151,16 @@ if 1 == 1:
                     # get the coherence score for the given parameters
                     cv = compute_coherence_values(corpus=corpus_sets[i], dictionary=id2word,
                                                   k=k, a=a, b=b)
-                    # Save the model results
-                    model_results['Validation_Set'].append(corpus_title[i])
-                    model_results['Topics'].append(k)
-                    model_results['Alpha'].append(a)
-                    model_results['Beta'].append(b)
-                    model_results['Coherence'].append(cv)
+                    if cv > 0.6:
+                        # Save the model results
+                        model_results['Validation_Set'].append(corpus_title[i])
+                        model_results['Topics'].append(k)
+                        model_results['Alpha'].append(a)
+                        model_results['Beta'].append(b)
+                        model_results['Coherence'].append(cv)
 
                     pbar.update(1)
-    pd.DataFrame(model_results).to_csv('Resultados/lda_tuning_results(Ane)(40)(Impares).csv', index=False)
+    pd.DataFrame(model_results).to_csv('Resultados/lda_tuning_results+0.6.csv', index=False)
     pbar.close()
 
 # Para la documentación

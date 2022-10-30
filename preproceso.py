@@ -61,7 +61,7 @@ def plot_difference_matplotlib(mdiff, title="", annotation=None):
     data = ax.imshow(mdiff, cmap='RdBu_r', origin='lower')
     plt.title(title)
     plt.colorbar(data)
-    plt.savefig('Imagenes/topicDiff.png')
+    plt.savefig('Imagenes/Matrices/'+title+'.png')
 
 def display_topics(H, W, feature_names, documents, no_top_words, no_top_documents):
     for topic_idx, topic in enumerate(H):
@@ -149,7 +149,7 @@ def topicosTest(review, diccionario):
 
     return df
 
-def topicosTrain(df, num_Topics):
+def topicosTrain(df, num_Topics, alfa, beta):
     # ---> Parte 1: https://elmundodelosdatos.com/topic-modeling-gensim-fundamentos-preprocesamiento-textos/
     #ruta = str(input("Introduce el path relativo (EJ: ./datasets/nombre.csv) :"))
     dfOld = df      #guardamos aqui las columnas que no modificamos pero si necesitamos posteriormente
@@ -194,9 +194,9 @@ def topicosTrain(df, num_Topics):
     tf_vectorizer.fit_transform(documents.values.astype(str))
 
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
-               num_topics=18, random_state=42,
+               num_topics=num_Topics, random_state=42,
                chunksize=1000, passes=10,
-               alpha=0.7 , eta=0.9)
+               alpha=alfa , eta=beta)
 
     # Guardo el modelo
     file = open("./modelos/lda.sav", "wb")
@@ -214,7 +214,7 @@ def topicosTrain(df, num_Topics):
         print(i)
 
     mdiff, annotation = lda.diff(lda, distance='jaccard', num_words=10)
-    plot_difference_matplotlib(mdiff, title="Topic difference (one model) [jaccard distance]", annotation=annotation)
+    plot_difference_matplotlib(mdiff, title="Topicdiff_"+str(num_Topics)+"_"+str(alfa)+"_"+str(beta), annotation=annotation)
 
     return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico
