@@ -93,7 +93,7 @@ def main():
         print("Ha elegido clasificar instancias nuevas del modelo")
         clasificarInstancias()
 
-    elif int(eleccion)2 == 4:
+    elif int(eleccion) == 4:
         print("SALIENDO...")
         return
 
