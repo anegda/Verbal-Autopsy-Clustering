@@ -51,4 +51,4 @@ def kdistance():
     plt.xlabel("nPoints closer than k-distance")
     plt.ylabel("k-distance")
     plt.plot(y, color ="green")
-    plt.savefig('Imagenes/kdistance.png')
+    plt.savefig('Imagenes/kdistance2.png')

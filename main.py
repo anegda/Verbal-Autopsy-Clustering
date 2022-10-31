@@ -81,19 +81,19 @@ def main():
 
     eleccion = input()
 
-    if eleccion == 1:
+    if int(eleccion) == 1:
         print("Ha elegido estimar el valor de epsilon dados unos ciertos parámetros")
         kdistance.kdistance()
 
-    elif eleccion == 2:
+    elif int(eleccion) == 2:
         print("Ha elegido entrenar el modelo ")
         entrenarModelo()
 
-    elif eleccion == 3:
+    elif int(eleccion) == 3:
         print("Ha elegido clasificar instancias nuevas del modelo")
         clasificarInstancias()
 
-    elif eleccion == 4:
+    elif int(eleccion)2 == 4:
         print("SALIENDO...")
         return
 
