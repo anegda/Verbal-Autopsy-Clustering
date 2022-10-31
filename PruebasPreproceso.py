@@ -1,30 +1,19 @@
+import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None
-import preproceso
-import numpy as np
-pd.options.mode.chained_assignment = None
 from matplotlib import pyplot as plt
+import seaborn as sns
+import preproceso
+sns.set()
 
-"""
-f="datasets/train.csv"
-df = pd.read_csv(f)
-f2 ="Resultados/lda_tuning_results+0.6.csv"
-parDF = pd.read_csv(f2)
-for i in range(len(parDF)):
-    numTopics = parDF.iloc[i]["Topics"]
-    alfa = parDF.iloc[i]["Alpha"]
-    beta = parDF.iloc[i]["Beta"]
-    print(alfa, beta, numTopics)
-    preproceso.topicosTrain(df, numTopics, alfa, beta)
-"""
 f = "datasets/train.csv"
 df = pd.read_csv(f)
 distMedias = []
-df, diccionario = preproceso.topicosTrain(df, 26, 0.2, 0.9)
-#print(df)
+df, diccionario = preproceso.topicosTrain(df, 12)
+print(df.head())
 
 topics = df["Topicos"]
-topicDocs = np.zeros(shape=(df.shape[0], 26))
+topicDocs = np.zeros(shape=(df.shape[0], 12))
 
 for i in range(len(df)):
     topicDocs[i] = np.array(topics.iloc[i])
@@ -39,7 +28,7 @@ for i in range(len(topicDocs)):
             dists.append(dst)
 
     dists = sorted(dists)
-    dists = dists[:(27)]
+    dists = dists[:(13)]
     distMedia = sum(dists) / len(dists)
     distMedias.append(distMedia)
 

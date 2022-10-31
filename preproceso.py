@@ -149,7 +149,7 @@ def topicosTest(review, diccionario):
 
     return df
 
-def topicosTrain(df, num_Topics, alfa, beta):
+def topicosTrain(df, num_Topics):
     # ---> Parte 1: https://elmundodelosdatos.com/topic-modeling-gensim-fundamentos-preprocesamiento-textos/
     #ruta = str(input("Introduce el path relativo (EJ: ./datasets/nombre.csv) :"))
     dfOld = df      #guardamos aqui las columnas que no modificamos pero si necesitamos posteriormente
@@ -196,7 +196,7 @@ def topicosTrain(df, num_Topics, alfa, beta):
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
                num_topics=num_Topics, random_state=42,
                chunksize=1000, passes=10,
-               alpha=alfa , eta=beta)
+               alpha=1.5 , eta=0.2)
 
     # Guardo el modelo
     file = open("./modelos/lda.sav", "wb")
@@ -212,9 +212,6 @@ def topicosTrain(df, num_Topics, alfa, beta):
 
     for i in lda.print_topics(-1):
         print(i)
-
-    mdiff, annotation = lda.diff(lda, distance='jaccard', num_words=10)
-    plot_difference_matplotlib(mdiff, title="Topicdiff_"+str(num_Topics)+"_"+str(alfa)+"_"+str(beta), annotation=annotation)
 
     return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico
