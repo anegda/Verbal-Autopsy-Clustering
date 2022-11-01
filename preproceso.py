@@ -147,7 +147,7 @@ def topicosTest(review, diccionario):
     tf_vectorizer.fit_transform(documents.values.astype(str))
 
     topicos = []
-    for i in range (len(documents)):
+    for i in range(len(documents)):
         topicos.append(topicosReview(cuerpo, i))
 
     df["Topicos"] = topicos
@@ -187,6 +187,7 @@ def topicosTrain(df, num_Topics):
     # no_below = mantener tokens que se encuentran en el a menos 10% de los documentos
     # no_above = mantener tokens que se encuentran en no mas del 80% de los documentos
     diccionario.filter_extremes(no_below=0.10, no_above = 0.75)
+    diccionario.save("modelos/dicc")
     #print(f'Número de tokens: {len(diccionario)}')
 
     # Creamos el corpus (por cada token en el df) QUE ES UN ARRAY BOW
@@ -209,15 +210,15 @@ def topicosTrain(df, num_Topics):
     pickle.dump(lda, file)
     file.close()
     topicos = []
-    for i in range (len(documents)):
+    for i in range(len(documents)):
         topicos.append(topicosReview(cuerpo, i))
     df["Topicos"] = topicos
 
     df["newid"] = dfOld["newid"]    #guardamos los ids
     df["Chapter"] = dfOld["gs_text34"].apply(diseaseToChapter)  #guardamos los chapters
 
-    for i in lda.print_topics(-1):
-        print(i)
+    '''for i in lda.print_topics(-1):
+        print(i)'''
 
     return df, diccionario
     # Para esta review random sacamos el array de contribuciones de cada topico

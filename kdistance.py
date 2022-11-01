@@ -1,23 +1,23 @@
 import numpy as np
 import pandas as pd
-pd.options.mode.chained_assignment = None
 from matplotlib import pyplot as plt
 import seaborn as sns
-
 import preproceso
 import DBSCAN
+pd.options.mode.chained_assignment = None
 
 sns.set()
 
 def kdistance():
     print("--- ELECCIÓN DE PARÁMETROS ---")
     print("numTopics (default = 20)")
-    ntpcs = input()
+    ntpcs = int(input())
     print("minPoints (default = numTopics+1<=minPoints<=numTopics*2)")
-    mnpts = input()
+    mnpts = int(input())
 
     f = "datasets/train.csv"
     df = pd.read_csv(f)
+    # df = df.head(100)
     numTopics = ntpcs
     minPoints = mnpts
     distMedias = []
@@ -51,4 +51,5 @@ def kdistance():
     plt.xlabel("nPoints closer than k-distance")
     plt.ylabel("k-distance")
     plt.plot(y, color ="green")
-    plt.savefig('Imagenes/kdistance2.png')
+    plt.savefig('Imagenes/kdistance.png')
+    plt.show()
