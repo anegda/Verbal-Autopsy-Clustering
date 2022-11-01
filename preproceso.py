@@ -90,9 +90,15 @@ def topicosReview(cuerpo, indice_review):
     # Contribución de los topicos mas significativos
     # dist_contrib = [topico[1] for topico in lda[bow_review]]
     dt = lda.get_document_topics(bow_review)
-    for t in dt:
-        topicos[t[0]]=t[1]
-
+    dicc = dict(dt)
+    valores = [i for i in dicc.values()]
+    llaves = [i for i in dicc.keys()]
+    valorMax = max(valores)
+    iMax = valores.index(valorMax)
+    indice = llaves[iMax]
+    topicos[indice] = valorMax
+    """for t in dt:
+        topicos[t[0]]=t[1]"""
     return topicos
 
 def diseaseToChapter(disease):
@@ -196,7 +202,7 @@ def topicosTrain(df, num_Topics):
     lda = LdaModel(corpus=cuerpo, id2word=diccionario,
                num_topics=num_Topics, random_state=42,
                chunksize=1000, passes=10,
-               alpha=1.5 , eta=0.2)
+               alpha=0.2 , eta=0.9)
 
     # Guardo el modelo
     file = open("./modelos/lda.sav", "wb")

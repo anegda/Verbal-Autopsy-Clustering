@@ -5,18 +5,27 @@ import DBSCAN
 import kdistance
 import numpy as np
 import preproceso
+import pickle
 
+dicc = []
 
 def entrenarModelo():
     f="datasets/train.csv"
     df = pd.read_csv(f)
     df, diccionario = preproceso.topicosTrain(df, 20)
+    global dicc
+    dicc = diccionario
+
     df.to_csv('Resultados/ResultadosPreproceso.csv')
     #df = df.head(2000)
 
 
     dbscan = DBSCAN.DBScan()
     clusters = dbscan.fit(0.10, 21, df)
+    file = open("./modelos/dbscan.sav", "wb")
+    pickle.dump(dbscan, file)
+    file.close()
+
     clusters = sorted(clusters, key=lambda x: x[0])
     print(clusters)
     referencias = evaluacion.etiqueta_significativa(clusters, df["Chapter"])
@@ -35,20 +44,24 @@ def entrenarModelo():
     resultados["Cluster"] = cluster
     resultados["Chapter"] = np.array(chapters)
     resultados.to_csv('Resultados/ResultadosTrain.csv')
-    cluster_df = pd.DataFrame(clusters, columns = ["idx", "cluster"])
 
 
 def clasificarInstancias():
     #INSERTAR DICCIONARIO
+
     fTest = "datasets/test.csv"
     dfTest = pd.read_csv(fTest)
-    dfTest = preproceso.topicosTest(dfTest, diccionario)
+    dfTest = preproceso.topicosTest(dfTest, dicc)
+
+    file = open("./modelos/dbscan.sav", "rb")
+    dbscan = pickle.load(file)
+    file.close()
 
     indicesTest = []
     clustersTest = []
     newidTest = []
     for i in range(len(dfTest)):
-        cluster = DBSCAN.DBScan.predict(dfTest.iloc[i])
+        cluster = dbscan.predict(dfTest.iloc[i])
         indicesTest.append(i)
         newidTest.append(dfTest.iloc[i]["newid"])
         clustersTest.append(cluster)
