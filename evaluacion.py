@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 # Calculating accuracy score
 import matplotlib.pyplot as plt
@@ -27,6 +29,7 @@ def etiqueta_significativa(clusters, y_train):
         etiqueta = capitulos[recuento.index(maximo)]
         reference_labels[i] = etiqueta
 
+        pickle.dump(reference_labels, "modelos/reference_labels")
 
     return reference_labels
 

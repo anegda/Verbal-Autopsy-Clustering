@@ -55,8 +55,8 @@ def entrenarModelo():
 def clasificarInstancias():
     #INSERTAR DICCIONARIO
 
-    fTest = "datasets/test.csv"
-    dfTest = pd.read_csv(fTest)
+    fTest = "datasets/demo.csv"
+    dfTest = pd.read_csv(fTest, delimiter="\t")
     # dfTest = dfTest.head(100)
     dicc = gensim.corpora.Dictionary.load("modelos/dicc")
     dfTest = preproceso.topicosTest(dfTest, dicc)
@@ -78,6 +78,7 @@ def clasificarInstancias():
     resultadosTest["Indice"] = np.array(indicesTest)
     resultadosTest["newid"] = np.array(newidTest)
     resultadosTest["Cluster"] = np.array(clustersTest)
+    #resultadosTest["tag"] = np.array(tagsTest)
     resultadosTest.to_csv('Resultados/ResultadosTest.csv')
     print("Los resultados del test han sido almacenados en Resultados/ResultadosTest.csv")
 
