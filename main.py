@@ -8,13 +8,12 @@ import preproceso
 import pickle
 pd.options.mode.chained_assignment = None
 
-
 def entrenarModelo():
     f="datasets/train.csv"
     df = pd.read_csv(f)
     # df = df.head(100)
     print("### Definición de parámetros del modelo LDA:")
-    print("Introduza el número de tópicos: ")
+    print("Introduzca el número de tópicos (mejor --> 26): ")
     numTopics = int(input())
     df, diccionario = preproceso.topicosTrain(df, numTopics)
 
@@ -23,9 +22,9 @@ def entrenarModelo():
     #df = df.head(2000)
 
     print("### Definición de parámetros del DBSCAN")
-    print("Introduzca el valor de épsilon: ")
-    epsilon = int(input())
-    print("Introduzca el valor de NMPR (número de vecinos): ")
+    print("Introduzca el valor de épsilon (mejor --> 0.1: ")
+    epsilon = float(input())
+    print("Introduzca el valor de NMPR (mejor --> 100): ")
     nmpr = int(input())
     dbscan = DBSCAN.DBScan()
     clusters = dbscan.fit(epsilon, nmpr, df)

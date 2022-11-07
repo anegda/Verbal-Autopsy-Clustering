@@ -12,7 +12,7 @@ df, diccionario = preproceso.topicosTrain(df, 26)
 df.to_csv("Resultados/ResultadosPreproceso.csv")
 
 dbscan = DBSCAN.DBScan()
-clusters = dbscan.fit(0.1, 70, df)
+clusters = dbscan.fit(0.125, 170, df)
 clusters = sorted(clusters, key=lambda x: x[0])
 print(clusters)
 referencias = evaluacion.etiqueta_significativa(clusters, df["Chapter"])
