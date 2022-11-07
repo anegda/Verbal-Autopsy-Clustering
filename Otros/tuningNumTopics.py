@@ -69,7 +69,7 @@ STOPWORDS = set(stopwords.words("english"))
 wnl = WordNetLemmatizer()
 stemmer = SnowballStemmer("english")
 
-df = pd.read_csv("datasets/train.csv")
+df = pd.read_csv("../datasets/train.csv")
 dfOld = df      #guardamos aqui las columnas que no modificamos pero si necesitamos posteriormente
 df = df[["open_response"]]
 
