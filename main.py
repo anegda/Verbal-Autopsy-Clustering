@@ -65,22 +65,28 @@ def clasificarInstancias():
     dbscan = pickle.load(file)
     file.close()
 
+    clusters, dfTrain = dbscan.getClusters()
+    referencias = evaluacion.etiqueta_significativa(clusters, dfTrain["Chapter"])
+
     indicesTest = []
     clustersTest = []
     newidTest = []
+    capitulosTest = []
     for i in range(len(dfTest)):
         cluster = dbscan.predict(dfTest.iloc[i])
         indicesTest.append(i)
         newidTest.append(dfTest.iloc[i]["newid"])
+        capitulosTest.append(referencias[cluster])
         clustersTest.append(cluster)
 
     resultadosTest = pd.DataFrame()
     resultadosTest["Indice"] = np.array(indicesTest)
     resultadosTest["newid"] = np.array(newidTest)
     resultadosTest["Cluster"] = np.array(clustersTest)
+    resultadosTest["PredCap"] = np.array(capitulosTest)
     #resultadosTest["tag"] = np.array(tagsTest)
-    resultadosTest.to_csv('Resultados/ResultadosTest.csv')
-    print("Los resultados del test han sido almacenados en Resultados/ResultadosTest.csv")
+    resultadosTest.to_csv('Resultados/ResultadosDemo.csv')
+    print("Los resultados del test han sido almacenados en Resultados/ResultadosDemo3.csv")
 
 def main():
     print('''BIENVENIDO AL AGRUPADOR DE DOCUMENTOS MÉDICOS

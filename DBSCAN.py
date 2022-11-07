@@ -115,6 +115,8 @@ class DBScan:
 
             return keys[recuento.index(maximo)]  # keys(recuento(maximo).index)   duda
 
+    def getClusters(self):
+        return self.clusters, self.df
 
 def obtenerVecinos(epsilon, nmpr, df, index):
     a = df.iloc[index]
