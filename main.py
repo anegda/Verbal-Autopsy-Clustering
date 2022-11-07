@@ -81,7 +81,6 @@ def clasificarInstancias():
 
     resultadosTest = pd.DataFrame()
     resultadosTest["Indice"] = np.array(indicesTest)
-    resultadosTest["newid"] = np.array(newidTest)
     resultadosTest["Cluster"] = np.array(clustersTest)
     resultadosTest["PredCap"] = np.array(capitulosTest)
     #resultadosTest["tag"] = np.array(tagsTest)
